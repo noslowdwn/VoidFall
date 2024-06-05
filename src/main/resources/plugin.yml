@@ -1,0 +1,12 @@
+name: VoidFall
+version: '${project.version}'
+main: noslowdwn.voidfall.VoidFall
+authors: [ noslowdwn ]
+description: Execute a command to a player who has fallen into the void
+
+commands:
+  voidfall: {}
+
+permissions:
+  voidfall.reload:
+    description: Allows you to reload plugin
