@@ -29,7 +29,8 @@ public class FallEvent implements Listener {
         if (executing.contains(p)) return;
 
         if (instance.getConfig().contains("worlds." + world)) {
-            if (p.getLocation().getY() <= instance.getConfig().getInt("worlds." + world + ".execute-on-height")) {
+            //if (p.getLocation().getY() <= instance.getConfig().getInt("worlds." + world + ".execute-on-height")) {
+            if (checkMode(p, instance.getConfig().getString("worlds." + world + ".mode"), world)) {
                 executing.add(p);
                 for (String str : instance.getConfig().getStringList("worlds." + world + ".execute-commands")) {
                     str = str.replace("%player%", p.getName())
@@ -124,13 +125,27 @@ public class FallEvent implements Listener {
                     }
 
                     else {
-                        VoidFall.debug("You're trying to cause an action that doesn't exist.");
-                        VoidFall.debug("Path to: worlds." + world + ".execute-commands");
-                        VoidFall.debug("Action: " + str);
+                        VoidFall.debug("&cYou're trying to cause an action that doesn't exist.");
+                        VoidFall.debug("&cPath to: worlds." + world + ".execute-commands");
+                        VoidFall.debug("&cAction: " + str);
                     }
                 }
                 Bukkit.getScheduler().runTaskLater(instance, () -> executing.remove(p), instance.getConfig().getInt("worlds." + world + ".repeat-fix", 3) * 20L);
             }
+        }
+    }
+
+    private boolean checkMode(Player p, String mode, String world) {
+        switch (mode) {
+            case "floor":
+                return p.getLocation().getY() <= instance.getConfig().getInt("worlds." + world + ".execute-on-height", 0);
+            case "roof":
+                return p.getLocation().getY() >= instance.getConfig().getInt("worlds." + world + ".execute-on-height", 127);
+            default:
+                VoidFall.debug("&You're trying to use a non-existent mod.");
+                VoidFall.debug("&cPath to: worlds." + world + ".mode");
+                VoidFall.debug("&cMode: " + mode);
+                return false;
         }
     }
 }
