@@ -145,7 +145,7 @@ public class FallEvent implements Listener {
                 VoidFall.debug("&You're trying to use a non-existent mod.");
                 VoidFall.debug("&cPath to: worlds." + world + ".mode");
                 VoidFall.debug("&cMode: " + mode);
-                return false;
+                return p.getLocation().getY() <= instance.getConfig().getInt("worlds." + world + ".execute-on-height", 0);
         }
     }
 }
