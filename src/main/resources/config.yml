@@ -12,31 +12,24 @@
 #
 # Настройки миров (Можно оставить пустым и тогда будет выключено)
 worlds:
-  # Название мира (Можно добавить сколько угодно миров)
-  Spawn:
-    # Высота на которой к игроку применится команда
-    execute-on-height: 0
-    # Мод выполнения
-    # floor - если игрок ниже указанной координаты
-    # roof - если игрок выше указанной координаты
-    mode: floor
-    # Нужно указать время в секундах для того, чтобы одни и те же команды не применялись к игроку несколько раз.
-    # (Фикс ошибки которая есть в многих подобных плагинах)
-    repeat-fix: 3
-    # Выполняемые команды
-    execute-commands:
-    - '[CONSOLE] rtp %player%'
-    - '[TITLE] &6РТП;&aУспех!'
-    - '[MESSAGE] &fВы были телепортированы в обычный мир, чтобы начать выживать'
-  # Пример
+  # Новое
   world:
-    execute-on-height: 0
-    mode: floor
-    repeat-fix: 3
-    execute-commands:
-    - '[PLAY_SOUND] BLOCK_NOTE_BELL;3'
-    - '[PLAYER] spawn'
-    - '[TITLE] &aСпасенье;&fТы был спасён от смерти!'
+    floor:
+      executing-height: 0
+      repeat-fix: 3
+      random: false
+      execute-commands:
+        - '[PLAY_SOUND] BLOCK_NOTE_BELL;3'
+        - '[PLAYER] spawn'
+        - '[TITLE] &aСпасенье;&fТы был спасён от смерти!'
+#    roof:
+#      executing-height: 127
+#      repeat-fix: 3
+#      random: false
+#      execute-commands:
+#        - '[PLAY_SOUND] BLOCK_NOTE_BELL;3'
+#        - '[PLAYER] spawn'
+#        - '[TITLE] &aСпасенье;&fТы был спасён от смерти!'
 
 # Сообщения
 messages:
@@ -47,3 +40,5 @@ messages:
 
 # Нужно если у вас вдруг перестанут работать к примеру звуки или отображаться сообщения.
 debug-mode: false
+config-version: 1.1
+check-updates: false

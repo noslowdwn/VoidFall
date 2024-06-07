@@ -1,11 +1,14 @@
 package noslowdwn.voidfall;
 
+import noslowdwn.voidfall.events.OnHeightReach;
+import noslowdwn.voidfall.utils.ColorsParser;
+import noslowdwn.voidfall.utils.Config;
+import noslowdwn.voidfall.utils.UpdateChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.io.IOException;
 
 public final class VoidFall extends JavaPlugin {
 
@@ -14,39 +17,29 @@ public final class VoidFall extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        load();
+        Config.load();
+        Config.checkVersion();
 
         this.getCommand("voidfall").setExecutor((sender, command, label, args) -> {
             if (sender instanceof Player && !sender.hasPermission("voidfall.reload")) {
-                sender.sendMessage(ColorsUtil.of(getConfig().getString("messages.no-permission")));
+                sender.sendMessage(ColorsParser.of(getConfig().getString("messages.no-permission")));
                 return true;
             }
 
             reloadConfig();
-            sender.sendMessage(ColorsUtil.of(getConfig().getString("messages.reload-message")));
+            Config.checkVersion();
+            sender.sendMessage(ColorsParser.of(getConfig().getString("messages.reload-message")));
 
             return true;
         });
 
-        this.getServer().getPluginManager().registerEvents(new FallEvent(), this);
-    }
+        this.getServer().getPluginManager().registerEvents(new OnHeightReach(), this);
 
-    private void load() {
-        File file = new File(this.getDataFolder(), "config.yml");
-        if (!file.exists())
-            this.saveResource("config.yml", false);
-
-        YamlConfiguration config = new YamlConfiguration();
-
-        try {
-            config.load(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this, UpdateChecker::checkVersion, 60L);
     }
 
     public static void debug(String error) {
         if (instance.getConfig().getBoolean("debug-mode", false))
-            Bukkit.getConsoleSender().sendMessage(ColorsUtil.of(error));
+            Bukkit.getConsoleSender().sendMessage(ColorsParser.of(error));
     }
 }
