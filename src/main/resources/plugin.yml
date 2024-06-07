@@ -9,4 +9,8 @@ commands:
 
 permissions:
   voidfall.reload:
+    default: op
     description: Allows you to reload plugin
+  voidfall.updates:
+    default: false
+    description: Allows you to see is there any updates
