@@ -2,7 +2,8 @@ name: VoidFall
 version: '${project.version}'
 main: noslowdwn.voidfall.VoidFall
 authors: [ noslowdwn ]
-description: Execute a command to a player who has fallen into the void
+description: Execute a command to a player who has reached the cords by Y that u specified
+softdepend: [ PlaceholderAPI ]
 
 commands:
   voidfall: {}

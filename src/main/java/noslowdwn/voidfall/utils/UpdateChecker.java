@@ -16,15 +16,22 @@ import static noslowdwn.voidfall.VoidFall.instance;
 public class UpdateChecker implements Listener {
     
     private static final String VERSION_URL = "https://raw.githubusercontent.com/noslowdwn/VoidFall/master/version";
+    private static final String SNAPSHOT_VERSION_URL = "https://raw.githubusercontent.com/noslowdwn/VoidFall/test/snapshop-version";
     private static Boolean new_version = false;
     private static String latestVersion, downloadLink;
 
     public static void checkVersion() {
         if(instance.getConfig().getBoolean("check-updates", false)) {
-            Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&6[VoidFall] Checking for updates..."));
+            Bukkit.getConsoleSender().sendMessage(Parser.hex("&6[VoidFall] Checking for updates..."));
+            String[] ver = instance.getDescription().getVersion().split("-", 2);
 
             try {
-                URL url = new URL(VERSION_URL);
+                URL url;
+                if (!ver[1].equalsIgnoreCase("snapshot"))
+                    url = new URL(SNAPSHOT_VERSION_URL);
+                else
+                    url = new URL(VERSION_URL);
+
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
@@ -40,7 +47,7 @@ public class UpdateChecker implements Listener {
 
                 String[] versionInfo = content.toString().split("->");
                 if (versionInfo.length != 2) {
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&6[VoidFall] Got version from server is invalid!"));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&6[VoidFall] Got version from server is invalid!"));
                     return;
                 }
 
@@ -48,17 +55,17 @@ public class UpdateChecker implements Listener {
                 downloadLink = versionInfo[1].trim();
 
                 if (instance.getDescription().getVersion().equals(latestVersion)) {
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&c[VoidFall] No updates were found!"));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&c[VoidFall] No updates were found!"));
                 } else {
                     new_version = true;
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&f============ VoidFall ============"));
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&fCurrent version: &7" + instance.getDescription().getVersion()));
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&fNew version: &a" + latestVersion));
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&fDownload link: &7" + downloadLink));
-                    Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&f=================================="));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&f============ VoidFall ============"));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&fCurrent version: &7" + instance.getDescription().getVersion()));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&fNew version: &a" + latestVersion));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&fDownload link: &7" + downloadLink));
+                    Bukkit.getConsoleSender().sendMessage(Parser.hex("&f=================================="));
                 }
             } catch (Exception e) {
-                Bukkit.getConsoleSender().sendMessage(ColorsParser.of("&c[VoidFall] Failed to check for updates: " + e.getMessage()));
+                Bukkit.getConsoleSender().sendMessage(Parser.hex("&c[VoidFall] Failed to check for updates: " + e.getMessage()));
             }
         }
     }
@@ -69,10 +76,10 @@ public class UpdateChecker implements Listener {
         Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
             if ((p.isOp() || p.hasPermission("voidfall.updates")) && new_version) {
                 p.sendMessage("");
-                p.sendMessage(ColorsParser.of("&6[VoidFall] &aWas found an update!"));
-                p.sendMessage(ColorsParser.of("&fCurrent version: &7" + instance.getDescription().getVersion()));
-                p.sendMessage(ColorsParser.of("&fNew version: &a" + latestVersion));
-                p.sendMessage(ColorsParser.of("&fDownload link: &7" + downloadLink));
+                p.sendMessage(Parser.hex("&6[VoidFall] &aWas found an update!"));
+                p.sendMessage(Parser.hex("&fCurrent version: &7" + instance.getDescription().getVersion()));
+                p.sendMessage(Parser.hex("&fNew version: &a" + latestVersion));
+                p.sendMessage(Parser.hex("&fDownload link: &7" + downloadLink));
                 p.sendMessage("");
             }
         }, 100L);
