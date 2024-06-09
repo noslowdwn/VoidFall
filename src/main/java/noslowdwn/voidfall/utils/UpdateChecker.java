@@ -27,7 +27,7 @@ public class UpdateChecker implements Listener {
 
             try {
                 URL url;
-                if (!ver[1].equalsIgnoreCase("snapshot"))
+                if (!ver[1].equalsIgnoreCase("Snapshot"))
                     url = new URL(SNAPSHOT_VERSION_URL);
                 else
                     url = new URL(VERSION_URL);

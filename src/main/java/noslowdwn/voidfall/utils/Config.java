@@ -9,8 +9,10 @@ import static noslowdwn.voidfall.VoidFall.instance;
 
 public class Config {
 
+    private static File file;
+
     public static void load() {
-        File file = new File(instance.getDataFolder(), "config.yml");
+        file = new File(instance.getDataFolder(), "config.yml");
         if (!file.exists()) {
             instance.saveResource("config.yml", false);
         }
@@ -34,14 +36,15 @@ public class Config {
                 return;
             }
 
-            int backupNumber = instance.getDataFolder().listFiles().length;
+            int backupNumber = backupFolder.listFiles().length;
             File backupFile = new File(backupFolder, ("config_backup_" + backupNumber + ".yml"));
-            try {
-                new YamlConfiguration().save(backupFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Bukkit.getConsoleSender().sendMessage(Parser.hex("&c[VoidFall] Error! Failed to save config_backup_" + backupNumber + ".yml to " + backupFile.getPath()));
+            if (file.renameTo(backupFile)) {
+                instance.saveResource("config.yml", true);
+            } else {
+                Bukkit.getConsoleSender().sendMessage(Parser.hex("&cYour configuration file is old, but &ncreate new is not possible&c."));
             }
+
+            load();
         }
     }
 }

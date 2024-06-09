@@ -20,7 +20,7 @@ public class VoidDamage implements Listener {
         String world = p.getWorld().getName();
 
         if (instance.getConfig().contains("worlds." + world + ".floor.disable-void-damage")
-                && applyBoolean(p, "worlds." + world + ".floor.disable-void-damage")) {
+                && applyBoolean(p, "worlds." + world + ".floor.disable-void-damage", "false")) {
             e.setDamage(0);
         }
     }

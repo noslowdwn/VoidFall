@@ -50,12 +50,17 @@ public class Parser {
         }
     }
 
-    public static Boolean applyBoolean(Player p, String way) {
+    public static Boolean applyBoolean(Player p, String way, String def) {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             return applyPlaceholders(p, instance.getConfig().getString(way).replace("%player%", p.getName()).replace("%world%", p.getWorld().getName()))
                     .equalsIgnoreCase("true");
         } else {
-            return instance.getConfig().getBoolean(way);
+            try {
+                return instance.getConfig().getBoolean(way, Boolean.parseBoolean(def));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -70,7 +75,12 @@ public class Parser {
                 return 1;
             }
         } else {
-            return instance.getConfig().getInt(way);
+            try {
+                return instance.getConfig().getInt(way, Integer.parseInt(def));
+            } catch (final NumberFormatException e) {
+                e.printStackTrace();
+                return 1;
+            }
         }
     }
 

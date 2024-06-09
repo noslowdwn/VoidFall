@@ -31,7 +31,7 @@ worlds:
       # Нужно ли выбрать рандомно одно действие из списка и использовать его
       random: false
       # Нужно ли убирать урон от бездны? (Необязательно)
-      disable-void-damage: %luckperms_has_permission_void.fall%
+      disable-void-damage: '%luckperms_has_permission_void.fall%'
       # Действия
       execute-commands:
         - '[PLAY_SOUND] BLOCK_NOTE_BELL;3'
@@ -58,13 +58,13 @@ worlds:
   spawn:
     floor:
       executing-height: 0
-      repeat-fix: %math_4+5-2*3% # Тут будет 3
+      repeat-fix: '%math_4+5-2*3%' # Тут будет 3
       random: false
       execute-commands:
         - '[PLAYER] rtp safe'
   world_nether:
     roof:
-      executing-height: %math_126+1% # Тут будет 127
+      executing-height: '%math_126+1%' # Тут будет 127
       repeat-fix: 120
       execute-commands:
         - '[TITLE] &c&kkkkkkkkkkkkk;&c&kkkkkkkkkkkkkkkkkkkkkkkkk'

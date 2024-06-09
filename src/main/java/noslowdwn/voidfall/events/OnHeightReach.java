@@ -56,7 +56,7 @@ public class OnHeightReach implements Listener {
         }
 
         executing.add(p);
-        if (Parser.applyBoolean(p, "worlds." + world + "." + mode + ".random")) {
+        if (Parser.applyBoolean(p, "worlds." + world + "." + mode + ".random", "false")) {
             execute(p, commands, world);
         } else {
             for (String str : commands) {
