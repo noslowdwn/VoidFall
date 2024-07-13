@@ -27,6 +27,7 @@ public final class VoidFall extends JavaPlugin {
                 return true;
             }
 
+            Config.load();
             reloadConfig();
             Config.checkVersion();
             if (sender instanceof Player)
