@@ -1,50 +1,58 @@
-# Допустимые исполнители:
-# [CONSOLE] - выполнить действие от имени консоли
-# [PLAYER] - выполнить действие от имени игрока (Не нужно писать /)
-# [TITLE] - Вывести сообщение игроку на экран (Написанное после ; будет отображено в сабтитле)
-# [ACTIONBAR] - Вывести сообщение игроку над хотбаром (В екшбаре)
-# [MESSAGE] - Отобразить сообщение игроку в чате
-# [PLAY_SOUND] - Проиграть музыку игроку (Указывать ЗВУК;ГРОМКОСТЬ;НАПРАВЛЕНИЕ (Громкость и направление необязательно))
+# Available actions:
+# [CONSOLE] - execute a command as the console
+# [PLAYER] - execute a command as the player (Do not write /)
+# [TITLE] - display a message to the player on the screen (title) (Text after ; will be shown as a subtitle)
+# [ACTIONBAR] - display a message to the player above the hotbar (In the action bar)
+# [MESSAGE] - send a message to the player in chat
+# [PLAY_SOUND] - play a sound to the player (Specify SOUND;VOLUME;PITCH (Volume and pitch are optional))
+# [PLAY_SOUND_ALL] - play a sound to all players (Specify SOUND;VOLUME;PITCH (Volume and pitch are optional))
+# [EFFECT] - give the player a potion effect (Specify EFFECT;STRENGTH;DURATION (Strength and duration are optional))
+# [BROADCAST] - send a message to all players online
+# [TELEPORT] - teleport the player (Specify WORLD;X;Y;Z;YAW;PITCH ("yaw" and "pitch" are optional))
+# [GAMEMODE] - set the player's game mode (0 or survival | 1 or creative | 2 or adventure | 3 or spectator)
 #
-# Доступные плейсхолдеры:
-# %player% - Ник игрока
-# %world% - Мир в котором игрок упал в пустоту
+# Available placeholders:
+# %player% - player's name
+# %world% - the world where the player fell into the void
+# %world_display_name% - display name of the world (Configured in "messages")
 #
-# Настройки миров (Можно оставить пустым и тогда будет выключено)
+# All available sounds can be found here -> https://helpch.at/docs/{server_version}/org/bukkit/Sound.html
+# Replace {server_version} with the version of the core on your server
+#
+# World settings (Left empty to disable)
 worlds:
-  # Название мира (Указывайте нужное вам) (Можно добавить сколько угодно)
+  # World name (Specify the one you need) (You can add as many as you want)
   world:
-    # Тип выполнения (Когда игрок достигнет минимальной координаты по Y)
+    # Execution type (When the player reaches the minimum Y coordinate)
     floor:
-      # Координата ниже которой если игрок достигнет, то будут выполнены действия
+      # The coordinate below which if the player reaches, actions will be executed
       executing-height: 0
-      # Фикс бага во всех подобных плагина, из-за которого команды применяются к игрокам бесконечность раз пока они не покинут координаты
-      # В данном случае команды будут повторяться каждые 3 секунды
+      # Fix for the bug in all similar plugins, where commands are applied to players indefinitely until they leave the coordinates
+      # In this case, commands will be repeated every 3 seconds
       repeat-fix: 3
-      # Нужно ли выбрать рандомно одно действие из списка и использовать его
+      # Should only one random action from the list be executed?
       random: false
-      # Действия
+      # Actions
       execute-commands:
         - '[PLAY_SOUND] BLOCK_NOTE_BELL;3'
         - '[PLAYER] spawn'
         - '[TITLE] &aСпасенье;&fТы был спасён от смерти!'
-    # Тип выполнения (Когда игрок достигнет максимальной координаты по Y)
+    # Execution type (When the player reaches the maximum Y coordinate)
     roof:
-      # Координата ниже которой если игрок достигнет, то будут выполнены действия
+      # The coordinate below which is the player reaches, actions will be executed
       executing-height: 666
-      # Фикс бага во всех подобных плагина, из-за которого команды применяются к игрокам бесконечность раз пока они не покинут координаты
-      # В данном случае команды будут повторяться каждые 15 секунд
+      # Fix for the bug in all similar plugins, where commands are applied to players indefinitely until they leave the coordinates
+      # In this case, commands will be repeated every 15 seconds
       repeat-fix: 15
-      # Нужно ли выбрать рандомно одно действие из списка и использовать его
-      # Можно не писать, тогда будет выключено
+      # Should a random action from the list be executed?
       random: true
-      # Действия
+      # Actions
       execute-commands:
-        - '[TITLE] &aКак ты сюда добрался?'
-        - '[TITLE] ;&eПривет!'
-        - '[TITLE] &1Используй /spawn;&9Чтобы телепортироваться на спавн!'
-        - '[TITLE] &5Твой ник %player%;&dМир в котором ты находишься %world%'
-  # Примеры
+        - '[TITLE] &aHow did you get here?'
+        - '[TITLE] ;&eHello!'
+        - '[TITLE] &1Use /spawn;&9To teleport to spawn!'
+        - '[TITLE] &5Your name %player%;&dWorld you are in %world%'
+  # Examples
   spawn:
     floor:
       executing-height: 0
@@ -65,18 +73,74 @@ worlds:
       execute-commands:
         - '[PLAYER] spawn'
 
-# Сообщения
-messages:
-  # Сообщение при перезагрузке плагина
-  reload-message: '&aПлагин VoidFall успешно перезагружен.'
-  # Сообщения если не хватает прав на использование команды
-  no-permission: '&cИзвини, но у тебя не хватает прав на использование данной команды.'
+# Region settings (Left empty to disable)
+# Requires WorldGuardEvents to work! You can downloaded it here -> https://www.spigotmc.org/resources/worldguard-events.65176/
+regions:
+  # Region name (case-insensitive)
+  test:
+    # Since WorldGuard allows creating regions with the same name in different worlds
+    # I added the ability to specify the worlds in which actions will be triggered
+    worlds:
+      - 'world'
+    # Actions when entering the region (Can be deleted to disable)
+    on-enter:
+      # Should only one random action from the list be executed?
+      random: false
+      # Actions
+      execute-commands:
+        - '[MESSAGE] &cYou entered a region owned by someone. &fJust know that you can''t build there!'
+    # Actions when leaving the region (Can be deleted to disable)
+    on-leave:
+      # Should only one random action from the list be executed?
+      random: false
+      # Actions
+      execute-commands:
+        - '[MESSAGE] &aYou left a region owned by someone.'
+  # Example
+  rtp:
+    worlds:
+      - 'spawn'
+    on-enter:
+      random: false
+      execute-commands:
+        - '[PLAYER] rtp'
 
-# Нужно если у вас вдруг перестанут работать к примеру звуки или отображаться сообщения.
+# Player connection/disconnection settings (Can be left empty to disable)
+player:
+  # When a player connects to the server (Can be deleted to disable)
+  on-server-join:
+    # Should a random action from the list be executed?
+    random: false
+    # Actions
+    execute-commands:
+      - '[ACTIONBAR] &6Welcome!'
+      - '[BROADCAST] &a[+] &f%player%'
+      - '[PLAY_SOUND_ALL] BLOCK_NOTE_BELL;1;1'
+  # When a player disconnects from the server (Can be deleted to disable)
+  on-server-leave:
+    # Should a random action from the list be executed?
+    random: false
+    # Actions
+    execute-commands:
+      - '[BROADCAST] &c[-] &f%player%'
+
+# Messages
+messages:
+  # Message when the plugin is reloaded
+  reload-message: '&aThe VoidFall plugin has been successfully reloaded.'
+  # Messages if there are not enough permissions to use the command
+  no-permission: '&cSorry, but you do not have enough permissions to use this command.'
+  # World names that will be displayed in %world_display_name%
+  worlds-display-names:
+    world: '&aworld'
+    world_nether: '&cnether'
+    world_the_end: '&dend'
+
+# Required if sounds suddenly stop working or messages are not displayed and so on.
 debug-mode: false
-# Версия конфига (Нужна, чтобы при обновлениях плагина не было ошибок)
-# Не стоит менять иначе ваш конфиг будет превращен в бекап и сброшен до заводских настроек
-config-version: 1.1
-# Нужно ли проверять обновления? Может быть полезно если будут найдены баги и плагин будет обновлён, а вам не прийдется самому следить
-# Но изначально отключено, так-как почти все выключает
+# Config version (Needed to prevent errors when updating the plugin)
+# Do not change otherwise your config will be backed up and reset to default
+config-version: 1.2
+# Should updates be checked? May be useful if bugs are found and the plugin is updated, so you don't have to monitor yourself
+# But it is initially disabled, as almost everyone turns it off
 check-updates: false

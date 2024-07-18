@@ -1,8 +1,12 @@
 name: VoidFall
-version: '${project.version}'
-main: noslowdwn.voidfall.VoidFall
-authors: [ noslowdwn ]
 description: Execute a command to a player who has fallen into the void
+version: '${project.version}'
+
+authors: [ noslowdwn ]
+
+softdepend: [ PlaceholderAPI, WorldGuardEvents ]
+
+main: noslowdwn.voidfall.VoidFall
 
 commands:
   voidfall: {}
@@ -10,7 +14,7 @@ commands:
 permissions:
   voidfall.reload:
     default: op
-    description: Allows you to reload plugin
+    description: Allows you to reload the plugin
   voidfall.updates:
     default: false
-    description: Allows you to see is there any updates
+    description: Allows you to see updates notifications on join

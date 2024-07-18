@@ -1,45 +1,88 @@
 package noslowdwn.voidfall;
 
-import noslowdwn.voidfall.events.OnHeightReach;
+import noslowdwn.voidfall.handlers.PlayerEvents;
+import noslowdwn.voidfall.handlers.Region;
+import noslowdwn.voidfall.handlers.YCords;
 import noslowdwn.voidfall.utils.ColorsParser;
 import noslowdwn.voidfall.utils.Config;
 import noslowdwn.voidfall.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
+import java.util.Objects;
 
-public final class VoidFall extends JavaPlugin {
+public final class VoidFall extends JavaPlugin
+{
 
-    public static VoidFall instance;
+    private static VoidFall instance;
 
     @Override
-    public void onEnable() {
-        instance = this;
+    public void onEnable()
+    {
+        setInstance(this);
         Config.load();
         Config.checkVersion();
 
-        this.getCommand("voidfall").setExecutor((sender, command, label, args) -> {
-            if (sender instanceof Player && !sender.hasPermission("voidfall.reload")) {
-                sender.sendMessage(ColorsParser.of(getConfig().getString("messages.no-permission")));
+        this.getCommand("voidfall").setExecutor((sender, command, label, args) ->
+        {
+            if (sender instanceof Player && !sender.hasPermission("voidfall.reload"))
+            {
+                sender.sendMessage(ColorsParser.of(sender, getConfig().getString("messages.no-permission")));
                 return true;
             }
 
-            reloadConfig();
+            Config.load();
             Config.checkVersion();
-            sender.sendMessage(ColorsParser.of(getConfig().getString("messages.reload-message")));
+
+            reloadConfig();
+
+            sender.sendMessage(ColorsParser.of(sender, getConfig().getString("messages.reload-message")));
 
             return true;
         });
 
-        this.getServer().getPluginManager().registerEvents(new OnHeightReach(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        this.getServer().getPluginManager().registerEvents(new YCords(), this);
+
+        Plugin wgEvents = Bukkit.getPluginManager().getPlugin("WorldGuardEvents");
+        if (wgEvents.isEnabled())
+        {
+            this.getServer().getPluginManager().registerEvents(new Region(), this);
+        }
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, UpdateChecker::checkVersion, 60L);
     }
 
-    public static void debug(String error) {
+    public static VoidFall getInstance()
+    {
+        return instance;
+    }
+
+    public static void setInstance(VoidFall instance)
+    {
+        Objects.requireNonNull(instance);
+        if (VoidFall.instance != null)
+        {
+            throw new UnsupportedOperationException();
+        }
+        VoidFall.instance = instance;
+    }
+
+    public static void debug(String msg, Player p, String type)
+    {
         if (instance.getConfig().getBoolean("debug-mode", false))
-            Bukkit.getConsoleSender().sendMessage(ColorsParser.of(error));
+        {
+            switch (type)
+            {
+                case "info":
+                    Bukkit.getLogger().info(ColorsParser.of(p, msg));
+                    break;
+                case "warn":
+                    Bukkit.getLogger().warning(ColorsParser.of(p, msg));
+                    break;
+            }
+        }
     }
 }
