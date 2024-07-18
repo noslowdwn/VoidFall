@@ -142,5 +142,4 @@ debug-mode: false
 # Do not change otherwise your config will be backed up and reset to default
 config-version: 1.2
 # Should updates be checked? May be useful if bugs are found and the plugin is updated, so you don't have to monitor yourself
-# But it is initially disabled, as almost everyone turns it off
-check-updates: false
+check-updates: true
