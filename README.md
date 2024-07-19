@@ -24,3 +24,11 @@ The plugin allows you to execute any commands, on any players, in any worlds!
 ## Commands and Permissions
  - /voidfall - reload plugin configuration
  - voidfall.reload - allows you to use the reload command
+
+
+## Download
+- en
+  - <br><a href="https://modrinth.com/plugin/voidfall">**modrinth.com**</a>
+- ru
+  - <br><a href="https://spigotmc.ru/resources/voidfall.2239/">**spigotmc.ru**</a>
+  - <br><a href="https://black-minecraft.com/resources/voidfall.5648/">**black-minecraft.com**</a>
