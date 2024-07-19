@@ -1,4 +1,4 @@
-# VoidFall 1.2
+# [![CodeFactor](https://www.codefactor.io/repository/github/noslowdwn/voidfall/badge)](https://www.codefactor.io/repository/github/noslowdwn/voidfall) VoidFall 1.2
 The plugin allows you to execute any commands, on any players, in any worlds!
 
 
@@ -14,8 +14,8 @@ The plugin allows you to execute any commands, on any players, in any worlds!
    - Show a message in above hotbar (In actionbar)
    - Show a message on display (In Title/Subtitle)
    - Give an effect
-   - Teleport to selected location
-   - change gamemode
+   - Teleport to specified location
+   - Change gamemode
  - You can select that only one action will be executed randomly
  - You can also enable debug mode to view any errors in console
  - Enable or disable updates checker
