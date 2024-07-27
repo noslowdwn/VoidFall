@@ -1,14 +1,14 @@
 # Available actions:
 # [CONSOLE] - execute a command as the console
-# [PLAYER] - execute a command as the player (Do not write /)
-# [TITLE] - display a message to the player on the screen (title) (Text after ; will be shown as a subtitle)
+# [PLAYER] - execute a command as the player (Do not write any /)
+# [TITLE] - display a message to the player on the screen (title) (Usage title;subtitle;fadeIn;stay;fadeOut)
 # [ACTIONBAR] - display a message to the player above the hotbar (In the action bar)
 # [MESSAGE] - send a message to the player in chat
-# [PLAY_SOUND] - play a sound to the player (Specify SOUND;VOLUME;PITCH (Volume and pitch are optional))
-# [PLAY_SOUND_ALL] - play a sound to all players (Specify SOUND;VOLUME;PITCH (Volume and pitch are optional))
-# [EFFECT] - give the player a potion effect (Specify EFFECT;STRENGTH;DURATION (Strength and duration are optional))
+# [PLAY_SOUND] - play a sound to the player (Usage SOUND;VOLUME;PITCH (Volume and pitch are optional))
+# [PLAY_SOUND_ALL] - play a sound to all players (Usage SOUND;VOLUME;PITCH (Volume and pitch are optional))
+# [EFFECT] - give the player a potion effect (Usage EFFECT;STRENGTH;DURATION (Strength and duration are optional))
 # [BROADCAST] - send a message to all players online
-# [TELEPORT] - teleport the player (Specify WORLD;X;Y;Z;YAW;PITCH ("yaw" and "pitch" are optional))
+# [TELEPORT] - teleport the player (Usage WORLD;X;Y;Z;YAW;PITCH ("yaw" and "pitch" are optional))
 # [GAMEMODE] - set the player's game mode (0 or survival | 1 or creative | 2 or adventure | 3 or spectator)
 #
 # Available placeholders:
@@ -123,6 +123,16 @@ player:
     # Actions
     execute-commands:
       - '[BROADCAST] &c[-] &f%player%'
+  # When a player died
+  on-death:
+    # Should a random action from the list be executed?
+    random: false
+    # If set to true, then the player will not be offered to respawn, and it will happen instantly automatically
+    instantly-respawn: false
+    # Actions
+    execute-commands:
+      - '[TITLE] ;&cYou died :(;10;40;20'
+      - '[SOUND] ENTITY_PLAYER_LEVELUP'
 
 # Messages
 messages:
@@ -140,6 +150,6 @@ messages:
 debug-mode: false
 # Config version (Needed to prevent errors when updating the plugin)
 # Do not change otherwise your config will be backed up and reset to default
-config-version: 1.2
+config-version: 1.3
 # Should updates be checked? May be useful if bugs are found and the plugin is updated, so you don't have to monitor yourself
 check-updates: true

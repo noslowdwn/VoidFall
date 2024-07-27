@@ -5,6 +5,7 @@ import noslowdwn.voidfall.handlers.Region;
 import noslowdwn.voidfall.handlers.YCords;
 import noslowdwn.voidfall.utils.ColorsParser;
 import noslowdwn.voidfall.utils.Config;
+import noslowdwn.voidfall.utils.ConfigValues;
 import noslowdwn.voidfall.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ public final class VoidFall extends JavaPlugin
 {
 
     private static VoidFall instance;
+    private static final int subVersion = Integer.parseInt(Bukkit.getVersion().split("-")[0].replace("1.", ""));
 
     @Override
     public void onEnable()
@@ -24,6 +26,8 @@ public final class VoidFall extends JavaPlugin
         setInstance(this);
         Config.load();
         Config.checkVersion();
+
+        ConfigValues.initializeAll();
 
         Plugin wgEvents = Bukkit.getPluginManager().getPlugin("WorldGuardEvents");
 
@@ -40,10 +44,10 @@ public final class VoidFall extends JavaPlugin
 
             reloadConfig();
 
+            ConfigValues.initializeAll();
             sender.sendMessage(ColorsParser.of(sender, getConfig().getString("messages.reload-message")));
 
-
-            if (!wgEvents.isEnabled())
+            if (wgEvents != null && !wgEvents.isEnabled())
             {
                 debug("[VoidFall] Actions on region enter/leave will be disabled!", null, "info");
                 debug("[VoidFall] Please download WorldGuardEvents to enable them.", null, "info");
@@ -56,7 +60,7 @@ public final class VoidFall extends JavaPlugin
         this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         this.getServer().getPluginManager().registerEvents(new YCords(), this);
 
-        if (wgEvents.isEnabled())
+        if (wgEvents != null && wgEvents.isEnabled())
         {
             this.getServer().getPluginManager().registerEvents(new Region(), this);
         }
@@ -99,5 +103,10 @@ public final class VoidFall extends JavaPlugin
                     break;
             }
         }
+    }
+
+    public static int getSubversion()
+    {
+        return subVersion;
     }
 }

@@ -1,5 +1,5 @@
 name: VoidFall
-description: Execute a command to a player who has fallen into the void
+description: Execute an action for the player who triggered the event
 version: '${project.version}'
 
 authors: [ noslowdwn ]

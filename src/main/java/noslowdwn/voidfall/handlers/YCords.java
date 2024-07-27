@@ -1,6 +1,7 @@
 package noslowdwn.voidfall.handlers;
 
 import noslowdwn.voidfall.VoidFall;
+import noslowdwn.voidfall.utils.ConfigValues;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,42 +19,49 @@ public class YCords implements Listener
 {
 
     private final Set<Player> executing = new HashSet<>();
+    private static final ConfigValues values = new ConfigValues();
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e)
     {
-        if (getInstance().getConfig().getConfigurationSection("worlds").getKeys(false).isEmpty()) return;
-
         final Player p = e.getPlayer();
         if (executing.contains(p)) return;
 
         final String world = p.getWorld().getName();
-        if (!getInstance().getConfig().contains("worlds." + world)) return;
+        if (!values.containsWorld(world)) return;
 
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
-
                 final double pHeight = p.getLocation().getY();
 
-                for (String mode : getInstance().getConfig().getConfigurationSection("worlds." + world).getKeys(false))
+                if (executing.contains(p)) return;
+                if (values.worldHasFloorMode(world) && pHeight <= values.worldFloorHeight(world))
                 {
-                    if (pHeight <= getInstance().getConfig().getInt("worlds." + world + ".floor.executing-height") && mode.equalsIgnoreCase("floor"))
-                    {
-                        run(p, world, mode);
-                    }
-                    if (pHeight >= getInstance().getConfig().getInt("worlds." + world + ".roof.executing-height") && mode.equalsIgnoreCase("roof"))
-                    {
-                        run(p, world, mode);
-                    }
+                    remove(p, world);
+                    run(p, world, "floor");
                 }
+                else if (values.worldHasRoofMode(world) && pHeight >= values.worldRoofHeight(world))
+                {
+                    remove(p, world);
+                    run(p, world, "roof");
+                }
+            }
+
+            private void remove(Player p, String world)
+            {
+                Bukkit.getScheduler().runTaskLater(
+                        getInstance(),
+                        () -> executing.remove(p),
+                        values.getWorldRepeatFix(world) * 20L
+                );
             }
 
             private void run(Player p, String world, String mode)
             {
-                final List<String> commands = getInstance().getConfig().getStringList("worlds." + world + "." + mode + ".execute-commands");
+                final List<String> commands = values.getWorldCommands(world, mode);
 
                 if (commands.isEmpty())
                 {
@@ -64,7 +72,7 @@ public class YCords implements Listener
 
                 executing.add(p);
 
-                if (getInstance().getConfig().getBoolean("worlds." + world + "." + mode + ".random", false))
+                if (values.isWorldRunModeRandom(world, mode))
                 {
                     Actions.executeRandom(p, commands, world);
                 }
@@ -75,12 +83,6 @@ public class YCords implements Listener
                         Actions.execute(p, str, world);
                     }
                 }
-
-                Bukkit.getScheduler().runTaskLater(
-                        getInstance(),
-                        () -> executing.remove(p),
-                        getInstance().getConfig().getInt("worlds." + world + ".floor.repeat-fix", 3) * 20L
-                );
             }
         }.runTaskAsynchronously(getInstance());
     }

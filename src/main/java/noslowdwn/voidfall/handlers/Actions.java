@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import noslowdwn.voidfall.VoidFall;
 import noslowdwn.voidfall.utils.ColorsParser;
+import noslowdwn.voidfall.utils.ConfigValues;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -20,6 +21,8 @@ import static org.bukkit.Bukkit.getServer;
 public class Actions
 {
 
+    private static final ConfigValues values = new ConfigValues();
+
     public static void executeRandom(Player p, List<String> list, String world)
     {
         Random random = new Random();
@@ -34,7 +37,7 @@ public class Actions
         str = str
                 .replace("%player%", p.getName())
                 .replace("%world%", world)
-                .replace("%world_display_name%", getWorldDisplayName(world));
+                .replace("%world_display_name%", values.getWorldDisplayName(world));
 
         if (str.startsWith("[CONSOLE] "))
         {
@@ -109,27 +112,55 @@ public class Actions
         else if (str.startsWith("[TITLE] "))
         {
             str = str.replace("[TITLE] ", "");
-            if (str.isEmpty())
+
+            String[] params = str.split(";", 5);
+
+            String main = "", sub = "";
+            int fadeIn = 10, stay = 40, fadeOut = 15;
+
+            switch (params.length)
             {
-                VoidFall.debug("There are not enough arguments to display the title message", p, "warn");
-                VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
-            }
-            else
-            {
-                String[] title = str.split(";", 2);
-                String main = "", sub = "";
-                switch (title.length)
-                {
-                    case 2:
-                        sub = title[1];
-                    case 1:
-                        main = title[0];
-                }
-                final String fMain = main, fSub = sub;
-                getScheduler().runTask(getInstance(), () ->
-                {
-                    p.sendTitle(ColorsParser.of(p, fMain), ColorsParser.of(p, fSub), 10, 40, 10);
-                });
+                case 0:
+                    VoidFall.debug("There are not enough arguments to display the title message", p, "warn");
+                    VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
+                    break;
+                case 5:
+                    try
+                    {
+                        fadeOut = Integer.parseInt(params[4]);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        VoidFall.debug("Number given for \"fadeOut\" in title action: " + params[4] + ", is not valid!", p, "warn");
+                    }
+                case 4:
+                    try
+                    {
+                        stay = Integer.parseInt(params[3]);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        VoidFall.debug("Number given for \"stay\" in title action: " + params[3] + ", is not valid!", p, "warn");
+                    }
+                case 3:
+                    try
+                    {
+                        stay = Integer.parseInt(params[2]);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        VoidFall.debug("Number given for \"fadeIn\" in title action: " + params[2] + ", is not valid!", p, "warn");
+                    }
+                case 2:
+                    sub = params[1];
+                case 1:
+                    main = params[0];
+                default:
+                    final String text = main, subText = sub;
+                    getScheduler().runTask(getInstance(), () ->
+                    {
+                        p.sendTitle(ColorsParser.of(p, text), ColorsParser.of(p, subText), 10, 40, 10);
+                    });
             }
         }
 
@@ -407,18 +438,6 @@ public class Actions
             VoidFall.debug("&cYou're trying to cause an action that doesn't exist.", p, "warn");
             VoidFall.debug("&cPath to: worlds." + world + ".execute-commands", p, "warn");
             VoidFall.debug("&cAction: " + str, p, "warn");
-        }
-    }
-
-    private static String getWorldDisplayName(String worldName)
-    {
-        if (getInstance().getConfig().getConfigurationSection("messages.worlds-display-names").contains(worldName))
-        {
-            return getInstance().getConfig().getString("messages.worlds-display-names." + worldName);
-        }
-        else
-        {
-            return worldName;
         }
     }
 }

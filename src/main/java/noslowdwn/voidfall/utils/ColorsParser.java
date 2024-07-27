@@ -10,12 +10,11 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static noslowdwn.voidfall.VoidFall.getSubversion;
+
 public class ColorsParser
 {
-
-    private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
-    private static final String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-    private static final int subVersion = Integer.parseInt(version.replace("1_", "").replaceAll("_R\\d", "").replace("v", ""));
+    private static final Pattern pattern = Pattern.compile("&#([a-fA-F\\d]{6})");
 
     public static String of(CommandSender sender, String message)
     {
@@ -28,21 +27,24 @@ public class ColorsParser
             message = "&c[VoidFall] Error message parsing! Please contact administrator or check console!";
         }
 
-        if (subVersion >= 16)
+        if (getSubversion() >= 16)
         {
+            // Took it from here https://github.com/Overwrite987/OverwriteAPI/blob/main/src/main/java/ru/overwrite/api/commons/StringUtils.java
+            // Thx to Overwrite
             Matcher matcher = pattern.matcher(message);
-
-            while (matcher.find())
-            {
-                String color = message.substring(matcher.start(), matcher.end());
-                StringBuilder replacement = new StringBuilder("x");
-
-                for (char c : color.substring(1).toCharArray())
-                    replacement.append('\u00A7').append(c);
-
-                message = message.replace(color, replacement.toString());
-                matcher = pattern.matcher(message);
+            StringBuffer builder = new StringBuffer(message.length() + 32);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                matcher.appendReplacement(builder,
+                        pattern + "x" +
+                                pattern + group.charAt(0) +
+                                pattern + group.charAt(1) +
+                                pattern + group.charAt(2) +
+                                pattern + group.charAt(3) +
+                                pattern + group.charAt(4) +
+                                pattern + group.charAt(5));
             }
+            message = matcher.appendTail(builder).toString();
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null && sender instanceof Player)

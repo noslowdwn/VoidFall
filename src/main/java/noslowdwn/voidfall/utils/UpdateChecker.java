@@ -54,13 +54,25 @@ public class UpdateChecker implements Listener
                 latestVersion = versionInfo[0].trim();
                 downloadLink = versionInfo[1].trim();
 
-                if (getInstance().getDescription().getVersion().equals(latestVersion))
+                String[] currVersion = getInstance().getDescription().getVersion().split("\\.");
+                String[] newVersion = latestVersion.split("\\.");
+                for (int i = 0; i < newVersion.length; i++)
+                {
+                    int currVer = Integer.parseInt(currVersion[i]);
+                    int newVer = Integer.parseInt(newVersion[i]);
+
+                    if (currVer < newVer)
+                    {
+                        new_version = true;
+                    }
+                }
+
+                if (!new_version)
                 {
                     Bukkit.getConsoleSender().sendMessage(ColorsParser.of(null, "&c[VoidFall] No updates were found!"));
                 }
                 else
                 {
-                    new_version = true;
                     Bukkit.getConsoleSender().sendMessage(ColorsParser.of(null, "&f============ VoidFall ============"));
                     Bukkit.getConsoleSender().sendMessage(ColorsParser.of(null, "&fCurrent version: &7" + getInstance().getDescription().getVersion()));
                     Bukkit.getConsoleSender().sendMessage(ColorsParser.of(null, "&fNew version: &a" + latestVersion));

@@ -6,12 +6,12 @@
 
     <groupId>noslowdwn</groupId>
     <artifactId>VoidFall</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
 
     <name>VoidFall</name>
 
-    <description>Execute a command to a player who has fallen into the void</description>
+    <description>Execute a command to a player who has reached th cords, entered/leaved region, joined/leaved server</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -31,7 +31,7 @@ public class Config
 
     public static void checkVersion()
     {
-        double version = 1.2;
+        double version = 1.3;
         if (getInstance().getConfig().getDouble("config-version") != version || !getInstance().getConfig().getKeys(false).contains("config-version"))
         {
             int i = 1;
