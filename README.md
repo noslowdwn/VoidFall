@@ -1,9 +1,8 @@
+<<<<<<< HEAD
 # [![CodeFactor](https://www.codefactor.io/repository/github/noslowdwn/voidfall/badge)](https://www.codefactor.io/repository/github/noslowdwn/voidfall) VoidFall 1.3
 The plugin provides actions for players and allows to execute it if somebody triggered it!
 
-
 ## Features
- - Create as many worlds as you need
  - Many triggers to execute actions
    - If a player reached cords
    - If a player entered/leaved the region (requires <a href="https://www.spigotmc.org/resources/worldguard-events.65176/">**WGEvents**</a>)
@@ -12,7 +11,19 @@ The plugin provides actions for players and allows to execute it if somebody tri
  - Specify that only one action will be executed randomly!
  - Also, can be enabled debug mode to view any errors in console
  - And provided updates checker for your comfort
- - optimized (90% code runs async and config doesn't cals every time)
+ - Optimized (90% code runs async and config doesn't cals every time)
+ - You can execute many actions when players reaching the selected cords
+   - Command from console 
+   - Command from player 
+   - Send message
+   - Send message to all online players
+   - Play sound
+   - Show a message in above hotbar (In actionbar)
+   - Show a message on display (In Title/Subtitle)
+   - Give an effect
+   - Teleport to specified location
+   - Change gamemode
+ - Enable or disable updates checker
 
 
 ## Commands and Permissions
