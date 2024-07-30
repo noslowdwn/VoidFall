@@ -23,17 +23,20 @@ public class Actions
 
     private static final ConfigValues values = new ConfigValues();
 
-    public static void executeRandom(Player p, List<String> list, String world)
+    private Actions()
+    {
+        throw new ExceptionInInitializerError("This class may not be initialized!");
+    }
+
+    public static void executeRandom(Player p, List<String> list, String world, String cause)
     {
         Random random = new Random();
         String cmd = list.get(random.nextInt(list.size()));
-        execute(p, cmd, world);
+        execute(p, cmd, world, cause);
     }
 
-
-    public static void execute(Player p, String str, String world)
+    public static void execute(Player p, String str, String world, String cause)
     {
-
         str = str
                 .replace("%player%", p.getName())
                 .replace("%world%", world)
@@ -44,7 +47,7 @@ public class Actions
             str = str.replace("[CONSOLE] ", "");
             if (str.isEmpty())
             {
-                VoidFall.debug("There are not enough arguments to run the command in console", p, "warn");
+                VoidFall.debug("Missing command for [CONSOLE] action. Check your config file.", p, "warn");
                 VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
             }
             else
@@ -59,36 +62,20 @@ public class Actions
 
         else if (str.startsWith("[MESSAGE] "))
         {
-            str = str.replace("[MESSAGE] ", "");
-            if (str.isEmpty())
-            {
-                VoidFall.debug("There are not enough arguments to send the message to a player", p, "warn");
-                VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
-            }
-            else
-            {
-                p.sendMessage(ColorsParser.of(p, str));
-            }
+            str = str.replace("[MESSAGE] ", "").replace("[MESSAGE]", "");
+            p.sendMessage(ColorsParser.of(p, str));
         }
 
         else if (str.startsWith("[BROADCAST] "))
         {
-            str = str.replace("[BROADCAST] ", "");
-            if (str.isEmpty())
-            {
-                VoidFall.debug("There are not enough arguments to send the broadcast message to all", p, "warn");
-                VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
-            }
-            else
-            {
-                String finalStr = str;
-                Bukkit.getOnlinePlayers().stream()
-                        .filter(Objects::nonNull)
-                        .forEach(
-                                player -> {
-                                    player.sendMessage(ColorsParser.of(p, finalStr));
-                                });
-            }
+            str = str.replace("[BROADCAST] ", "").replace("[BROADCAST]", "");
+            String finalStr = str;
+            Bukkit.getOnlinePlayers().stream()
+                    .filter(Objects::nonNull)
+                    .forEach(
+                            player -> {
+                                player.sendMessage(ColorsParser.of(p, finalStr));
+                            });
         }
 
         else if (str.startsWith("[PLAYER] "))
@@ -96,7 +83,7 @@ public class Actions
             str = str.replace("[PLAYER] ", "");
             if (str.isEmpty())
             {
-                VoidFall.debug("There are not enough arguments to execute the command from a player", p, "warn");
+                VoidFall.debug("Missing command for [PLAYER] action. Check your config file.", p, "warn");
                 VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
             }
             else
@@ -117,11 +104,10 @@ public class Actions
 
             String main = "", sub = "";
             int fadeIn = 10, stay = 40, fadeOut = 15;
-
             switch (params.length)
             {
                 case 0:
-                    VoidFall.debug("There are not enough arguments to display the title message", p, "warn");
+                    VoidFall.debug("Missing arguments for [TITLE] action. Check your config file.", p, "warn");
                     VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
                     break;
                 case 5:
@@ -131,7 +117,7 @@ public class Actions
                     }
                     catch (NumberFormatException e)
                     {
-                        VoidFall.debug("Number given for \"fadeOut\" in title action: " + params[4] + ", is not valid!", p, "warn");
+                        VoidFall.debug("The value: " + params[4] + " specified in \"FadeOut\" for the [TITLE] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 4:
                     try
@@ -140,7 +126,7 @@ public class Actions
                     }
                     catch (NumberFormatException e)
                     {
-                        VoidFall.debug("Number given for \"stay\" in title action: " + params[3] + ", is not valid!", p, "warn");
+                        VoidFall.debug("The value: " + params[3] + " specified in \"Stay\" for the [TITLE] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 3:
                     try
@@ -149,7 +135,7 @@ public class Actions
                     }
                     catch (NumberFormatException e)
                     {
-                        VoidFall.debug("Number given for \"fadeIn\" in title action: " + params[2] + ", is not valid!", p, "warn");
+                        VoidFall.debug("The value: " + params[2] + " specified in \"FadeIn\" for the [TITLE] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 2:
                     sub = params[1];
@@ -157,9 +143,10 @@ public class Actions
                     main = params[0];
                 default:
                     final String text = main, subText = sub;
+                    final int stayTime = stay, fadeOutTime = fadeOut;
                     getScheduler().runTask(getInstance(), () ->
                     {
-                        p.sendTitle(ColorsParser.of(p, text), ColorsParser.of(p, subText), 10, 40, 10);
+                        p.sendTitle(ColorsParser.of(p, text), ColorsParser.of(p, subText), fadeIn, stayTime, fadeOutTime);
                     });
             }
         }
@@ -169,7 +156,7 @@ public class Actions
             str = str.replace("[ACTIONBAR] ", "");
             if (str.isEmpty())
             {
-                VoidFall.debug("There are not enough arguments to display the message in actionbar", p, "warn");
+                VoidFall.debug("Missing arguments for [ACTIONBAR] action. Check your config file.", p, "warn");
                 VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
             }
             else
@@ -180,6 +167,7 @@ public class Actions
                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ColorsParser.of(p, fStr)));
                 });
             }
+            Sound test = Sound.BLOCK_NOTE_XYLOPHONE;
         }
 
         else if (str.startsWith("[PLAY_SOUND] ") || str.startsWith("[PLAY_SOUND_ALL] "))
@@ -196,8 +184,13 @@ public class Actions
             switch (params.length)
             {
                 case 0:
-                    VoidFall.debug("There are not enough arguments to play the sound", p, "warn");
-                    VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
+                    if (all) {
+                        VoidFall.debug("Missing arguments for [PLAY_SOUND_ALL] action! Check your config file.", p, "warn");
+                        VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
+                    } else {
+                        VoidFall.debug("Missing arguments for [PLAY_SOUND] action! Check your config file.", p, "warn");
+                        VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
+                    }
                     break;
                 case 3:
                     try
@@ -206,7 +199,11 @@ public class Actions
                     }
                     catch (final NumberFormatException exception)
                     {
-                        VoidFall.debug("Pitch given for sound action: " + params[2] + ", is not a valid number!", p, "warn");
+                        if (all) {
+                            VoidFall.debug("The value: " + params[2] + " specified in \"Pitch\" for the [PLAY_SOUND_ALL] action is invalid. Please check your config file.", p, "warn");
+                        } else {
+                            VoidFall.debug("The value: " + params[2] + " specified in \"Pitch\" for the [PLAY_SOUND] action is invalid. Please check your config file.", p, "warn");
+                        }
                     }
                 case 2:
                     try
@@ -215,7 +212,11 @@ public class Actions
                     }
                     catch (final NumberFormatException exception)
                     {
-                        VoidFall.debug("Volume given for sound action: " + params[1] + ", is not a valid number!", p, "warn");
+                        if (all) {
+                            VoidFall.debug("The value: " + params[1] + " specified in \"Volume\" for the [PLAY_SOUND_ALL] action is invalid. Please check your config file.", p, "warn");
+                        } else {
+                            VoidFall.debug("The value: " + params[1] + " specified in \"Volume\" for the [PLAY_SOUND] action is invalid. Please check your config file.", p, "warn");
+                        }
                     }
                 case 1:
                     try
@@ -224,8 +225,11 @@ public class Actions
                     }
                     catch (final IllegalArgumentException exception)
                     {
-                        VoidFall.debug("Failed to play sound! Maybe:", p, "warn");
-                        VoidFall.debug("Given sound name: " + params[0] + ", is not a valid?!", p, "warn");
+                        if (all) {
+                            VoidFall.debug("The value: " + params[0] + " specified in \"Sound\" for the [PLAY_SOUND_ALL] action is invalid. Please check your config file.", p, "warn");
+                        } else {
+                            VoidFall.debug("The value: " + params[0] + " specified in \"Sound\" for the [PLAY_SOUND] action is invalid. Please check your config file.", p, "warn");
+                        }
                     }
                 default:
                     final Sound fSound = sound;
@@ -236,11 +240,10 @@ public class Actions
                         {
                             Bukkit.getOnlinePlayers().stream()
                                     .filter(Objects::nonNull)
-                                    .forEach(
-                                            player ->
-                                            {
-                                                p.playSound(p.getLocation(), fSound, fVolume, fPitch);
-                                            });
+                                    .forEach(player ->
+                                    {
+                                        p.playSound(p.getLocation(), fSound, fVolume, fPitch);
+                                    });
                         }
                         else
                         {
@@ -260,18 +263,18 @@ public class Actions
             switch (params.length)
             {
                 case 0:
-                    VoidFall.debug("There are not enough arguments to apply effect to player", p, "warn");
+                    VoidFall.debug("Missing arguments for [EFFECT] action! Check your config file.", p, "warn");
                     VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
                     break;
                 case 3:
                     try
                     {
-                        duration = Integer.parseInt(params[1]) * 20;
+                        duration = Integer.parseInt(params[2]) * 20;
                     }
                     catch (final NumberFormatException e)
                     {
                         e.printStackTrace();
-                        VoidFall.debug("Duration given for [EFFECT] action: " + params[1] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[2] + " specified in \"Duration\" for the [EFFECT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 2:
                     try
@@ -281,21 +284,13 @@ public class Actions
                     catch (final NumberFormatException e)
                     {
                         e.printStackTrace();
-                        VoidFall.debug("Amplifier given for [EFFECT] action: " + params[1] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[1] + " specified in \"Amplifier\" for the [EFFECT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 1:
-                    try
+                    effect = PotionEffectType.getByName(params[0].toUpperCase());
+                    if (effect == null)
                     {
-                        effect = PotionEffectType.getByName(params[0].toUpperCase());
-                        if (effect == null)
-                        {
-                            throw new IllegalArgumentException("Invalid effect type");
-                        }
-                    }
-                    catch (IllegalArgumentException e)
-                    {
-                        e.printStackTrace();
-                        VoidFall.debug("Potion effect type given for [EFFECT] action by name: " + params[0] + ", doesn't exist!", p, "warn");
+                        VoidFall.debug("The value: " + params[0] + " specified in \"PotionEffect\" for the [EFFECT] action is invalid. Please check your config file.", p, "warn");
                     }
                 default:
                     final PotionEffectType fEffect = effect; int fDuration = duration, fAmplifier = amplifier;
@@ -317,66 +312,89 @@ public class Actions
             switch (params.length)
             {
                 case 0:
-                    VoidFall.debug("There are not enough arguments to teleport the player!", p, "warn");
+                    VoidFall.debug("Missing arguments for [TELEPORT] action! Check your config file.", p, "warn");
                     VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
                     break;
                 case 6:
                     try
                     {
-                        yaw = Float.parseFloat(params[5]);
+                        if (params[5].charAt(0) == '~') {
+                            float arg = Float.parseFloat(params[5].replace("~", ""));
+                            yaw = p.getLocation().getYaw() + arg;
+                        } else {
+                            yaw = Float.parseFloat(params[5]);
+                        }
                     }
                     catch (final NumberFormatException e)
                     {
-                        e.printStackTrace();
-                        VoidFall.debug("Given value for [TELEPORT]: " + params[5] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[5] + " specified in \"Yaw\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 5:
                     try
                     {
-                        pitch = Float.parseFloat(params[4]);
+                        if (params[4].charAt(0) == '~') {
+                            float arg = Float.parseFloat(params[4].replace("~", ""));
+                            pitch = p.getLocation().getPitch() + arg;
+                        } else {
+                            pitch = Float.parseFloat(params[4]);
+                        }
                     }
                     catch (final NumberFormatException e)
                     {
-                        e.printStackTrace();
-                        VoidFall.debug("Given value for [TELEPORT]: " + params[4] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[4] + " specified in \"Pitch\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 4:
                     try
                     {
-                        z = Double.parseDouble(params[3]);
+                        if (params[3].charAt(0) == '~') {
+                            float arg = Float.parseFloat(params[3].replace("~", ""));
+                            z = p.getLocation().getZ() + arg;
+                        } else {
+                            z = Double.parseDouble(params[3]);
+                        }
                     }
                     catch (final NumberFormatException e)
                     {
-                        e.printStackTrace();
-                        VoidFall.debug("Given value for [TELEPORT]: " + params[3] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[3] + " specified in \"Cord z\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 3:
                     try
                     {
-                        y = Double.parseDouble(params[2]);
+                        if (params[2].charAt(0) == '~') {
+                            float arg = Float.parseFloat(params[2].replace("~", ""));
+                            z = p.getLocation().getZ() + arg;
+                        } else {
+                            y = Double.parseDouble(params[2]);
+                        }
                     }
                     catch (final NumberFormatException e)
                     {
-                        e.printStackTrace();
-                        VoidFall.debug("Given value for [TELEPORT]: " + params[2] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[2] + " specified in \"Cord y\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 2:
                     try
                     {
-                        x = Double.parseDouble(params[1]);
+                        if (params[1].charAt(0) == '~') {
+                            float arg = Float.parseFloat(params[1].replace("~", ""));
+                            x = p.getLocation().getX() + arg;
+                        } else {
+                            x = Double.parseDouble(params[1]);
+                        }
                     }
                     catch (final NumberFormatException e)
                     {
-                        e.printStackTrace();
-                        VoidFall.debug("Given value for [TELEPORT]: " + params[1] + ", is not a valid number!", p, "warn");
+                        VoidFall.debug("The value: " + params[1] + " specified in \"Cord x\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                     }
                 case 1:
-                    tpWorld = getServer().getWorld(params[0]);
+                    if (params[0].equals("~")) {
+                        tpWorld = p.getLocation().getWorld();
+                    } else {
+                        tpWorld = getServer().getWorld(params[0]);
+                    }
                 default:
-
                     if (tpWorld == null)
                     {
-                        VoidFall.debug("The world given for [TELEPORT]: " + params[0] + ", doesn't exist!", p, "warn");
+                        VoidFall.debug("The value: " + params[0] + " specified in \"World\" for the [TELEPORT] action is invalid. Please check your config file.", p, "warn");
                         tpWorld = getServer().getWorlds().get(0);
                     }
 
@@ -399,33 +417,34 @@ public class Actions
             GameMode gm;
             if (str.isEmpty())
             {
-                VoidFall.debug("There are not enough arguments to set gamemode to the player", p, "warn");
+                VoidFall.debug("Missing arguments for [GAMEMODE] action! Check your config file.", p, "warn");
                 VoidFall.debug("Path to: worlds." + world + ".execute-commands", p, "warn");
             }
             else
             {
-                if (str.equalsIgnoreCase("1") || str.equalsIgnoreCase("creative"))
-                {
-                    gm = GameMode.CREATIVE;
+                switch (str) {
+                    case "1":
+                    case "creative":
+                        gm = GameMode.CREATIVE;
+                        break;
+                    case "2":
+                    case "adventure":
+                        gm = GameMode.ADVENTURE;
+                        break;
+                    case "3":
+                    case "spectator":
+                        gm = GameMode.SPECTATOR;
+                        break;
+                    case "0":
+                    case "survival":
+                        gm = GameMode.SURVIVAL;
+                        break;
+                    default:
+                        VoidFall.debug("The gamemode given for [GAMEMODE]: " + str + ", doesn't exist or not valid!", p, "warn");
+                        VoidFall.debug("&cPath to: worlds." + world + ".execute-commands", p, "warn");
+                        return;
                 }
-                else if (str.equalsIgnoreCase("2") || str.equalsIgnoreCase("adventure"))
-                {
-                    gm = GameMode.ADVENTURE;
-                }
-                else if (str.equalsIgnoreCase("3") || str.equalsIgnoreCase("spectator"))
-                {
-                    gm = GameMode.SPECTATOR;
-                }
-                else if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("survival"))
-                {
-                    gm = GameMode.SURVIVAL;
-                }
-                else
-                {
-                    VoidFall.debug("The gamemode given for [GAMEMODE]: " + str + ", doesn't exist or not valid!", p, "warn");
-                    VoidFall.debug("&cPath to: worlds." + world + ".execute-commands", p, "warn");
-                    return;
-                }
+
                 getScheduler().runTask(getInstance(), () ->
                 {
                     p.setGameMode(gm);

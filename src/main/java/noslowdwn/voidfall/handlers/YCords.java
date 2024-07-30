@@ -74,13 +74,13 @@ public class YCords implements Listener
 
                 if (values.isWorldRunModeRandom(world, mode))
                 {
-                    Actions.executeRandom(p, commands, world);
+                    Actions.executeRandom(p, commands, world, "worlds");
                 }
                 else
                 {
                     for (String str : commands)
                     {
-                        Actions.execute(p, str, world);
+                        Actions.execute(p, str, world, "worlds");
                     }
                 }
             }

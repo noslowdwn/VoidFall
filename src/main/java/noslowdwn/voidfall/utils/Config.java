@@ -9,6 +9,11 @@ import static noslowdwn.voidfall.VoidFall.getInstance;
 public class Config
 {
 
+    private Config()
+    {
+        throw new ExceptionInInitializerError("This class may not be initialized!");
+    }
+
     private static File file;
 
     public static void load()

@@ -6,50 +6,45 @@ import noslowdwn.voidfall.VoidFall;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static noslowdwn.voidfall.VoidFall.getSubversion;
+import static net.md_5.bungee.api.ChatColor.COLOR_CHAR;
 
 public class ColorsParser
 {
-    private static final Pattern pattern = Pattern.compile("&#([a-fA-F\\d]{6})");
 
-    public static String of(CommandSender sender, String message)
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F\\d]{6})");
+
+    private ColorsParser()
     {
-        if (message == null)
-        {
-            VoidFall.debug("[VoidFall] Error message parsing!", null, "warn");
-            VoidFall.debug("[VoidFall] Please check your messages.yml to find error!", null, "warn");
-            VoidFall.debug("[VoidFall] You can also check syntax on https://yamlchecker.com/!", null, "warn");
-            VoidFall.debug("[VoidFall] Or just delete 'messages.yml' and reload plugin!", null, "warn");
-            message = "&c[VoidFall] Error message parsing! Please contact administrator or check console!";
-        }
+        throw new ExceptionInInitializerError("This class may not be initialized!");
+    }
 
-        if (getSubversion() >= 16)
-        {
-            // Took it from here https://github.com/Overwrite987/OverwriteAPI/blob/main/src/main/java/ru/overwrite/api/commons/StringUtils.java
-            // Thx to Overwrite
-            Matcher matcher = pattern.matcher(message);
-            StringBuffer builder = new StringBuffer(message.length() + 32);
-            while (matcher.find()) {
-                String group = matcher.group(1);
-                matcher.appendReplacement(builder,
-                        pattern + "x" +
-                                pattern + group.charAt(0) +
-                                pattern + group.charAt(1) +
-                                pattern + group.charAt(2) +
-                                pattern + group.charAt(3) +
-                                pattern + group.charAt(4) +
-                                pattern + group.charAt(5));
-            }
-            message = matcher.appendTail(builder).toString();
-        }
+    public static String of(CommandSender sender, @NotNull String message) {
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null && sender instanceof Player)
         {
             message = PlaceholderAPI.setPlaceholders((Player) sender, message);
+        }
+
+        if (VoidFall.getSubVersion() >= 16) {
+            Matcher matcher = HEX_PATTERN.matcher(message);
+            StringBuffer builder = new StringBuffer(message.length() + 32);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                matcher.appendReplacement(builder,
+                        COLOR_CHAR + "x" +
+                                COLOR_CHAR + group.charAt(0) +
+                                COLOR_CHAR + group.charAt(1) +
+                                COLOR_CHAR + group.charAt(2) +
+                                COLOR_CHAR + group.charAt(3) +
+                                COLOR_CHAR + group.charAt(4) +
+                                COLOR_CHAR + group.charAt(5));
+            }
+            message = matcher.appendTail(builder).toString();
         }
 
         return ChatColor.translateAlternateColorCodes('&', message);

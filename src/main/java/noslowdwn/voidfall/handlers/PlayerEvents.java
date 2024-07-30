@@ -22,6 +22,7 @@ public class PlayerEvents implements Listener
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent e) {
+        if (values.containsPlayerActionsList("on-server-join")) return;
         final Player p = e.getPlayer();
 
         if (p == null) return;
@@ -43,13 +44,13 @@ public class PlayerEvents implements Listener
 
                 if (values.isPlayerServerJoinTriggerRandom())
                 {
-                    Actions.executeRandom(p, commands, p.getWorld().toString());
+                    Actions.executeRandom(p, commands, p.getWorld().toString(), "player");
                 }
                 else
                 {
                     for (String cmd : commands)
                     {
-                        Actions.execute(p, cmd, p.getWorld().toString());
+                        Actions.execute(p, cmd, p.getWorld().toString(), "player");
                     }
                 }
             }
@@ -58,6 +59,7 @@ public class PlayerEvents implements Listener
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent e) {
+        if (values.containsPlayerActionsList("on-server-leave")) return;
         final Player p = e.getPlayer();
 
         if (p == null) return;
@@ -79,13 +81,13 @@ public class PlayerEvents implements Listener
 
                 if (values.isPlayerServerQuitTriggerRandom())
                 {
-                    Actions.executeRandom(p, commands, p.getWorld().toString());
+                    Actions.executeRandom(p, commands, p.getWorld().toString(), "player");
                 }
                 else
                 {
                     for (String cmd : commands)
                     {
-                        Actions.execute(p, cmd, p.getWorld().toString());
+                        Actions.execute(p, cmd, p.getWorld().toString(), "player");
                     }
                 }
             }
@@ -94,6 +96,7 @@ public class PlayerEvents implements Listener
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerDeathEvent(PlayerDeathEvent e) {
+        if (values.containsPlayerActionsList("on-death")) return;
         final Player p = e.getEntity().getPlayer();
 
         if (p == null) return;
@@ -123,13 +126,13 @@ public class PlayerEvents implements Listener
 
                 if (values.isPlayerDeathTriggerRandom())
                 {
-                    Actions.executeRandom(p, commands, p.getWorld().toString());
+                    Actions.executeRandom(p, commands, p.getWorld().toString(), "player");
                 }
                 else
                 {
                     for (String cmd : commands)
                     {
-                        Actions.execute(p, cmd, p.getWorld().toString());
+                        Actions.execute(p, cmd, p.getWorld().toString(), "player");
                     }
                 }
             }

@@ -3,27 +3,28 @@ package noslowdwn.voidfall;
 import noslowdwn.voidfall.handlers.PlayerEvents;
 import noslowdwn.voidfall.handlers.Region;
 import noslowdwn.voidfall.handlers.YCords;
-import noslowdwn.voidfall.utils.ColorsParser;
-import noslowdwn.voidfall.utils.Config;
-import noslowdwn.voidfall.utils.ConfigValues;
-import noslowdwn.voidfall.utils.UpdateChecker;
+import noslowdwn.voidfall.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class VoidFall extends JavaPlugin
 {
 
     private static VoidFall instance;
-    private static final int subVersion = Integer.parseInt(Bukkit.getVersion().split("-")[0].replace("1.", ""));
+    private static int subVersion;
 
     @Override
     public void onEnable()
     {
         setInstance(this);
+        subVersion = extractMainVersion(Bukkit.getVersion());
+
         Config.load();
         Config.checkVersion();
 
@@ -105,8 +106,20 @@ public final class VoidFall extends JavaPlugin
         }
     }
 
-    public static int getSubversion()
+    private int extractMainVersion(String versionString) {
+        Pattern p = Pattern.compile("(?<=MC: |^)(1\\.\\d+)(?=\\D|$)");
+        Matcher m = p.matcher(versionString);
+        if (m.find()) {
+            return Integer.parseInt(m.group().replace("1.", ""));
+        } else {
+            return 0;
+        }
+
+    }
+
+    public static int getSubVersion()
     {
         return subVersion;
     }
+
 }

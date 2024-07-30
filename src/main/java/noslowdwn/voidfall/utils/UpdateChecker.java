@@ -21,6 +21,11 @@ public class UpdateChecker implements Listener
     private static Boolean new_version = false;
     private static String latestVersion, downloadLink;
 
+    private UpdateChecker()
+    {
+        throw new ExceptionInInitializerError("This class may not be initialized!");
+    }
+
     public static void checkVersion()
     {
         if (getInstance().getConfig().getBoolean("check-updates", false))

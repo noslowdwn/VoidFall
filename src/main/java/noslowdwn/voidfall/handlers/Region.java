@@ -49,13 +49,13 @@ public class Region implements Listener
 
                 if (values.entryRegionsAreUsingRandom(regionName))
                 {
-                    Actions.executeRandom(player, commands, worldName);
+                    Actions.executeRandom(player, commands, worldName, "regions");
                 }
                 else
                 {
                     for (String cmd : commands)
                     {
-                        Actions.execute(player, cmd, worldName);
+                        Actions.execute(player, cmd, worldName, "regions");
                     }
                 }
             }
@@ -86,13 +86,13 @@ public class Region implements Listener
                 {
                     if (values.leaveRegionsAreUsingRandom(regionName))
                     {
-                        Actions.executeRandom(player, commands, worldName);
+                        Actions.executeRandom(player, commands, worldName, "regions");
                     }
                     else
                     {
                         for (String cmd : commands)
                         {
-                            Actions.execute(player, cmd, worldName);
+                            Actions.execute(player, cmd, worldName, "regions");
                         }
                     }
                 }

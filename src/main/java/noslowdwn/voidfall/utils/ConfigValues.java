@@ -13,6 +13,7 @@ public class ConfigValues
     private static final Map<String, Object> worldDisplayName = new HashMap<>();
 
     // Player Actions
+    private static final List<String> playerActionsList = new ArrayList<>();
     private static boolean isPlayerServerJoinTriggerEnabled, isPlayerServerQuitTriggerEnabled, isPlayerDeathTriggerEnabled;
     private static boolean isInstantlyRespawnEnabled;
     private static boolean isPlayerServerJoinTriggerRandom, isPlayerServerQuitTriggerRandom, isPlayerDeathTriggerRandom;
@@ -39,6 +40,8 @@ public class ConfigValues
         worldDisplayName.putAll(getInstance().getConfig().getConfigurationSection("messages.worlds-display-names").getValues(false));
 
         // Player Actions
+        if (!playerActionsList.isEmpty()) playerActionsList.clear();
+        playerActionsList.addAll(getInstance().getConfig().getConfigurationSection("player").getKeys(false));
         isPlayerServerJoinTriggerEnabled = getInstance().getConfig().contains("player.on-server-join");
         isPlayerServerQuitTriggerEnabled = getInstance().getConfig().contains("player.on-server-leave");
         isPlayerDeathTriggerEnabled = getInstance().getConfig().contains("player.on-death");
@@ -133,6 +136,11 @@ public class ConfigValues
     public String getWorldDisplayName(String worldName)
     {
         return worldDisplayName.getOrDefault(worldName, worldName).toString();
+    }
+
+    public boolean containsPlayerActionsList(String action)
+    {
+        return !playerActionsList.contains(action);
     }
 
     public boolean isPlayerServerJoinTriggerEnabled()
