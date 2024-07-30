@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # [![CodeFactor](https://www.codefactor.io/repository/github/noslowdwn/voidfall/badge)](https://www.codefactor.io/repository/github/noslowdwn/voidfall) VoidFall 1.3
 The plugin provides actions for players and allows to execute it if somebody triggered it!
 
@@ -50,6 +49,6 @@ The plugin provides actions for players and allows to execute it if somebody tri
  - [EFFECT] - give the player a potion effect (Usage EFFECT;STRENGTH;DURATION (Strength and duration are optional))
  - [BROADCAST] - send a message to all players online
  - [TELEPORT] - teleport the player (Usage WORLD;X;Y;Z;YAW;PITCH ("yaw" and "pitch" are optional))
-   - You can also use ~ to get player position for value (For example '[TELEPORT] ~;~;~100;~;~;~' 
+   - You can also use ~ to get player position for value (For example '[TELEPORT] \~;\~;\~100;\~;\~;\~' 
      will teleport player in the same world, with the same x and z cord, but 100 blocks above, and also with the same yaw and pitch) 
  - [GAMEMODE] - set the player's game mode (0 or survival | 1 or creative | 2 or adventure | 3 or spectator)
